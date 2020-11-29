@@ -71,6 +71,42 @@ class TelegramController extends AbstractController implements TelegramValidated
                 }
             );
 
+            $bot->callbackQuery(
+                function (Update $update) use (
+                    $bot,
+                    $logger,
+                    $telegramService,
+                    $dictionaryService
+                ) {
+
+                    $logger->info($update);
+//                    $message = $update->getMessage();
+//                    $text = $message->getText();
+//                    $data = explode(' - ', $text);
+//                    if (!isset($data[0]) || !isset($data[1])) {
+//                        $bot->sendMessage($message->getChat()->getId(), 'Non ho riconosciuto il comando');
+//                    }
+//                    $featureName = $data[0];
+//                    $command = $data[1];
+//
+//                    $logger->info($featureName);
+//                    $logger->info($command);
+//                    $resultStatus = null;
+//                    $result = $telegramService->sendCommand($featureName, $command, $resultStatus);
+//                    if (true === $result) {
+//                        $bot->sendMessage(
+//                            $message->getChat()->getId(),
+//                            $dictionaryService->getCommandDoneLabel($command, $resultStatus)
+//                        );
+//                    } else {
+//                        $bot->sendMessage(
+//                            $message->getChat()->getId(),
+//                            '♠️ Ops! Il backend non ha potuto mettersi in contatto con l\'appliance'
+//                        );
+//                    }
+                }
+            );
+
             $bot->on(
                 function (Update $update) use ($bot, $telegramService, $dictionaryService) {
                     $message = $update->getMessage();
@@ -110,40 +146,7 @@ class TelegramController extends AbstractController implements TelegramValidated
                 }
             );
 
-            $bot->callbackQuery(
-                function (Update $update) use (
-                    $bot,
-                    $logger,
-                    $telegramService,
-                    $dictionaryService
-                ) {
-                    $logger->info($update);
-//                    $message = $update->getMessage();
-//                    $text = $message->getText();
-//                    $data = explode(' - ', $text);
-//                    if (!isset($data[0]) || !isset($data[1])) {
-//                        $bot->sendMessage($message->getChat()->getId(), 'Non ho riconosciuto il comando');
-//                    }
-//                    $featureName = $data[0];
-//                    $command = $data[1];
-//
-//                    $logger->info($featureName);
-//                    $logger->info($command);
-//                    $resultStatus = null;
-//                    $result = $telegramService->sendCommand($featureName, $command, $resultStatus);
-//                    if (true === $result) {
-//                        $bot->sendMessage(
-//                            $message->getChat()->getId(),
-//                            $dictionaryService->getCommandDoneLabel($command, $resultStatus)
-//                        );
-//                    } else {
-//                        $bot->sendMessage(
-//                            $message->getChat()->getId(),
-//                            '♠️ Ops! Il backend non ha potuto mettersi in contatto con l\'appliance'
-//                        );
-//                    }
-                }
-            );
+
 
             // TODO check how to enable a fallback event when other events are not been matched
 //            $bot->on(function(Update $update) use ($bot, $logger) {
