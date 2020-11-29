@@ -42,9 +42,7 @@ class AlexaController extends AbstractController implements AlexaValidatedContro
             )) {
             $response->respond('Casa Smart, cosa posso fare?');
             $response->endSession(false);
-        }
-
-        if (
+        } else if (
             $alexaRequest instanceof SessionEndedRequest
             || ($alexaRequest instanceof IntentRequest
                 && ('AMAZON.StopIntent' === $alexaRequest->intentName
@@ -52,16 +50,12 @@ class AlexaController extends AbstractController implements AlexaValidatedContro
             )) {
             $response->respond('Ciao ciao');
             $response->endSession(true);
-        }
-        if ($alexaRequest instanceof IntentRequest
+        } else if ($alexaRequest instanceof IntentRequest
             && 'AMAZON.HelpIntent' === $alexaRequest->intentName
         ) {
             $response->respond('Posso accendere, spegnere, aprire e chiudere le cose di casa. Intendi forse T.V.?');
             $response->endSession(false);
-        }
-
-
-        if ($alexaRequest instanceof IntentRequest) {
+        } else if ($alexaRequest instanceof IntentRequest) {
             $response->respond('Ops! Il backend non ha potuto mettersi in contatto con l\'appliance');
             $response->endSession(true);
             $slots = $alexaRequest->slots;
