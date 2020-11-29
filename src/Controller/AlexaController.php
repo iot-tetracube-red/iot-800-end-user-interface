@@ -53,11 +53,9 @@ class AlexaController extends AbstractController implements AlexaValidatedContro
             $response->respond('Ciao ciao');
             $response->endSession(true);
         }
-        if (
-            $alexaRequest instanceof SessionEndedRequest
-            || ($alexaRequest instanceof IntentRequest
-                && 'AMAZON.HelpIntent' === $alexaRequest->intentName
-            )) {
+        if ($alexaRequest instanceof IntentRequest
+            && 'AMAZON.HelpIntent' === $alexaRequest->intentName
+        ) {
             $response->respond('Posso accendere, spegnere, aprire e chiudere le cose di casa. Intendi forse T.V.?');
             $response->endSession(false);
         }
