@@ -117,30 +117,31 @@ class TelegramController extends AbstractController implements TelegramValidated
                     $telegramService,
                     $dictionaryService
                 ) {
-                    $message = $update->getMessage();
-                    $text = $message->getText();
-                    $data = explode(' - ', $text);
-                    if (!isset($data[0]) || !isset($data[1])) {
-                        $bot->sendMessage($message->getChat()->getId(), 'Non ho riconosciuto il comando');
-                    }
-                    $featureName = $data[0];
-                    $command = $data[1];
-
-                    $logger->info($featureName);
-                    $logger->info($command);
-                    $resultStatus = null;
-                    $result = $telegramService->sendCommand($featureName, $command, $resultStatus);
-                    if (true === $result) {
-                        $bot->sendMessage(
-                            $message->getChat()->getId(),
-                            $dictionaryService->getCommandDoneLabel($command, $resultStatus)
-                        );
-                    } else {
-                        $bot->sendMessage(
-                            $message->getChat()->getId(),
-                            '♠️ Ops! Il backend non ha potuto mettersi in contatto con l\'appliance'
-                        );
-                    }
+                    $logger->info($update);
+//                    $message = $update->getMessage();
+//                    $text = $message->getText();
+//                    $data = explode(' - ', $text);
+//                    if (!isset($data[0]) || !isset($data[1])) {
+//                        $bot->sendMessage($message->getChat()->getId(), 'Non ho riconosciuto il comando');
+//                    }
+//                    $featureName = $data[0];
+//                    $command = $data[1];
+//
+//                    $logger->info($featureName);
+//                    $logger->info($command);
+//                    $resultStatus = null;
+//                    $result = $telegramService->sendCommand($featureName, $command, $resultStatus);
+//                    if (true === $result) {
+//                        $bot->sendMessage(
+//                            $message->getChat()->getId(),
+//                            $dictionaryService->getCommandDoneLabel($command, $resultStatus)
+//                        );
+//                    } else {
+//                        $bot->sendMessage(
+//                            $message->getChat()->getId(),
+//                            '♠️ Ops! Il backend non ha potuto mettersi in contatto con l\'appliance'
+//                        );
+//                    }
                 }
             );
 
