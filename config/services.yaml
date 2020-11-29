@@ -4,7 +4,10 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-
+    TELEGRAM_TOKEN: '%env(TELEGRAM_TOKEN)%'
+    SKILL_ID: '%env(ALEXA_SKILL_ID)%'
+    ALEXA_ENABLE_VALIDATION: '%env(bool:ALEXA_ENABLE_VALIDATION)%'
+    SECURITY_HEADER: '%env(SECURITY_HEADER)%'
 services:
     # default configuration for services in *this* file
     _defaults:
