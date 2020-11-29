@@ -80,7 +80,7 @@ class TelegramController extends AbstractController implements TelegramValidated
                     $dictionaryService
                 ) {
 
-                    $logger->info($callbackQuery);
+                    $logger->info(json_encode($callbackQuery));
                     $bot->answerCallbackQuery($callbackQuery->getId(), 'Fatto');
 //                    $message = $update->getMessage();
 //                    $text = $message->getText();
