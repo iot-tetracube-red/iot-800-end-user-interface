@@ -36,15 +36,32 @@ class AlexaController extends AbstractController implements AlexaValidatedContro
         $response->respond('Non ho capito niente di quello che mi hai detto, passo e chiudo!');
         $response->endSession(true);
 
-        if ($alexaRequest instanceof LaunchRequest) {
+        if ($alexaRequest instanceof LaunchRequest
+            || ($alexaRequest instanceof IntentRequest
+                && 'AMAZON.NavigateHomeIntent' === $alexaRequest->intentName
+            )) {
             $response->respond('Casa Smart, cosa posso fare?');
             $response->endSession(false);
         }
 
-        if ($alexaRequest instanceof SessionEndedRequest) {
+        if (
+            $alexaRequest instanceof SessionEndedRequest
+            || ($alexaRequest instanceof IntentRequest
+                && ('AMAZON.StopIntent' === $alexaRequest->intentName
+                    || 'AMAZON.CancelIntent' === $alexaRequest->intentName)
+            )) {
             $response->respond('Ciao ciao');
             $response->endSession(true);
         }
+        if (
+            $alexaRequest instanceof SessionEndedRequest
+            || ($alexaRequest instanceof IntentRequest
+                && 'AMAZON.HelpIntent' === $alexaRequest->intentName
+            )) {
+            $response->respond('Posso accendere, spegnere, aprire e chiudere le cose di casa. Intendi forse T.V.?');
+            $response->endSession(false);
+        }
+
 
         if ($alexaRequest instanceof IntentRequest) {
             $response->respond('Ops! Il backend non ha potuto mettersi in contatto con l\'appliance');
