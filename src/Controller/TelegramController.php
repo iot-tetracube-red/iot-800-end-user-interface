@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use TelegramBot\Api\Client;
 use TelegramBot\Api\Exception;
+use TelegramBot\Api\Types\CallbackQuery;
 use TelegramBot\Api\Types\Update;
 
 class TelegramController extends AbstractController implements TelegramValidatedController
@@ -72,14 +73,15 @@ class TelegramController extends AbstractController implements TelegramValidated
             );
 
             $bot->callbackQuery(
-                function (Update $update) use (
+                function (CallbackQuery $callbackQuery) use (
                     $bot,
                     $logger,
                     $telegramService,
                     $dictionaryService
                 ) {
 
-                    $logger->info($update);
+                    $logger->info($callbackQuery);
+                    $bot->answerCallbackQuery($callbackQuery->getId(), 'Fatto');
 //                    $message = $update->getMessage();
 //                    $text = $message->getText();
 //                    $data = explode(' - ', $text);
