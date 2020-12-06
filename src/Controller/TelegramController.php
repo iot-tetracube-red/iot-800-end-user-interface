@@ -105,19 +105,10 @@ class TelegramController extends AbstractController implements TelegramValidated
                     $text = $message->getText();
                     $feature = trim(ltrim($text, '🔸'), ' ');
 
-                    $textResponse = '😇 Non ho nessun aggiornamento di status';
+                    $textResponse = $feature;
                     $keyboard = [];
                     $featureStatus = $telegramService->getFeature($feature);
-                    if (
-                        !is_null($featureStatus)
-                        && !is_null($featureStatus->getStatus())
-                        && !is_null($featureStatus->getType())
-                    ) {
-                        $textResponse = $dictionaryService->getFeatureStatus(
-                            $featureStatus->getType(),
-                            $featureStatus->getStatus()
-                        );
-                    }
+
                     if (!is_null($featureStatus)) {
                         $keyboard = $telegramService->commandKeyboard($feature);
                     }
