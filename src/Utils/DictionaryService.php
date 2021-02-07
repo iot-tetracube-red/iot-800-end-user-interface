@@ -2,6 +2,8 @@
 
 namespace App\Utils;
 
+use App\Model\CommandModel;
+
 class DictionaryService {
 
 	const COMMANDS = [
@@ -44,12 +46,12 @@ class DictionaryService {
 	];
 
 	/**
-	 * @param $command
+	 * @param CommandModel $command
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	public function getCommandLabel( $command ) {
-		return self::COMMANDS[ $command ] ?? '';
+	public function getCommandLabel( CommandModel $command ): string {
+		return self::COMMANDS[ $command->getName() ] ?? $command->getName();
 	}
 
 	public function getCommandDoneLabel( $command, $value ) {
@@ -74,5 +76,26 @@ class DictionaryService {
 		return $answer;
 	}
 
+	public function getCommandDone(): string {
+	    return '👌 Fatto!';
+    }
+
+    public function getNotExistingDevice(): string {
+	    return '🥶 Questo device non esiste...';
+    }
+
+    public function getUnavailableService(): string
+    {
+        return '😱 Servizio non disponibile!';
+    }
+
+    public function getClientError(): string
+    {
+        return '🤓 Mi hai inviato dei dati sbagliati';
+    }
+
+    public function getGenericError(): string {
+	    return '♠️ Ops! È successo qualcosa di inatteso';
+    }
 
 }

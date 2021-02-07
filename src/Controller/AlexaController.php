@@ -42,33 +42,46 @@ class AlexaController extends AbstractController implements AlexaValidatedContro
             )) {
             $response->respond('Casa Smart, cosa posso fare?');
             $response->endSession(false);
-        } else if (
-            $alexaRequest instanceof SessionEndedRequest
-            || ($alexaRequest instanceof IntentRequest
-                && ('AMAZON.StopIntent' === $alexaRequest->intentName
-                    || 'AMAZON.CancelIntent' === $alexaRequest->intentName)
-            )) {
-            $response->respond('Ciao ciao');
-            $response->endSession(true);
-        } else if ($alexaRequest instanceof IntentRequest
-            && 'AMAZON.HelpIntent' === $alexaRequest->intentName
-        ) {
-            $response->respond('Posso accendere, spegnere, aprire e chiudere le cose di casa. Intendi forse T.V.?');
-            $response->endSession(false);
-        } else if ($alexaRequest instanceof IntentRequest) {
-            $response->respond('Ops! Il backend non ha potuto mettersi in contatto con l\'appliance');
-            $response->endSession(true);
-            $slots = $alexaRequest->slots;
-            $name = '';
-            $resultStatus = null;
-            if (isset($slots['appliance'])) {
-                $name = $slots['appliance'];
+        } else {
+            if (
+                $alexaRequest instanceof SessionEndedRequest
+                || ($alexaRequest instanceof IntentRequest
+                    && ('AMAZON.StopIntent' === $alexaRequest->intentName
+                        || 'AMAZON.CancelIntent' === $alexaRequest->intentName)
+                )) {
+                $response->respond('Ciao ciao');
+                $response->endSession(true);
+            } else {
+                if ($alexaRequest instanceof IntentRequest
+                    && 'AMAZON.HelpIntent' === $alexaRequest->intentName
+                ) {
+                    $response->respond(
+                        'Posso accendere, spegnere, aprire e chiudere le cose di casa. Intendi forse T.V.?'
+                    );
+                    $response->endSession(false);
+                } else {
+                    if ($alexaRequest instanceof IntentRequest) {
+                        $response->endSession(true);
+                        $slots = $alexaRequest->slots;
+                        $name = '';
+                        $deviceName = '';
+                        $referenceId = $alexaRequest->user->userId;
+                        if (isset($slots['appliance'])) {
+                            $name = $slots['appliance'];
+                        }
+                        if (isset($slots['device'])) {
+                            $deviceName = $slots['device'];
+                        }
+                        $result = $alexaService->sendCommand(
+                            $deviceName,
+                            $name,
+                            $alexaRequest->intentName,
+                            $referenceId
+                        );
+                        $response->respond($result);
+                    }
+                }
             }
-            $result = $alexaService->sendCommand($name, $alexaRequest->intentName, $resultStatus);
-            if (true === $result) {
-                $response->respond($dictionaryService->getCommandDoneLabel($alexaRequest->intentName, $resultStatus));
-            }
-
         }
 
         return $this->json($response->render());

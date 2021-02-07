@@ -34,7 +34,6 @@ class TelegramController extends AbstractController implements TelegramValidated
         bool $isUserEnabled = false
     ): Response {
         if (!$isUserEnabled) {
-
             return $this->json([]);
         }
 
@@ -44,7 +43,6 @@ class TelegramController extends AbstractController implements TelegramValidated
             $bot->command(
                 'start',
                 function ($message) use ($bot, $telegramService) {
-
                     $bot->sendMessage(
                         $message->getChat()->getId(),
                         '👇',
@@ -81,21 +79,22 @@ class TelegramController extends AbstractController implements TelegramValidated
                 ) {
                     $text = $callbackQuery->getData();
                     $data = explode(' - ', $text);
-                    if (!isset($data[0]) || !isset($data[1])) {
+                    if (!isset($data[0]) || !isset($data[1]) || !isset($data[2])) {
                         $bot->answerCallbackQuery($callbackQuery->getId(), 'Non ho riconosciuto il comando');
                     }
-                    $featureName = $data[0];
-                    $command = $data[1];
+                    $deviceName = $data[0];
+                    $featureName = $data[1];
+                    $command = $data[2];
+                    $referenceId = $callbackQuery->getChatInstance();
 
                     $logger->info($featureName);
                     $logger->info($command);
                     $resultStatus = null;
-                    $result = $telegramService->sendCommand($featureName, $command, $resultStatus);
-                    if (true === $result) {
-                        $bot->answerCallbackQuery($callbackQuery->getId(), $dictionaryService->getCommandDoneLabel($command, $resultStatus));
-                    } else {
-                        $bot->answerCallbackQuery($callbackQuery->getId(), '♠️ Ops! Il backend non ha potuto mettersi in contatto con l\'appliance');
-                    }
+                    $result = $telegramService->sendCommand($deviceName, $featureName, $command, $referenceId);
+                    $bot->answerCallbackQuery(
+                        $callbackQuery->getId(),
+                        $result
+                    );
                 }
             );
 
@@ -103,14 +102,14 @@ class TelegramController extends AbstractController implements TelegramValidated
                 function (Update $update) use ($bot, $telegramService, $dictionaryService) {
                     $message = $update->getMessage();
                     $text = $message->getText();
-                    $feature = trim(ltrim($text, '🔸'), ' ');
-
-                    $textResponse = $feature;
+                    $textResponse = 'Problema!';
                     $keyboard = [];
-                    $featureStatus = $telegramService->getFeature($feature);
 
-                    if (!is_null($featureStatus)) {
-                        $keyboard = $telegramService->commandKeyboard($feature);
+                    $deviceFeatureNames = explode(' - ', $text);
+                    if (count($deviceFeatureNames) === 2) {
+                        $deviceName = trim(ltrim($deviceFeatureNames[0], '🔸'), ' ');
+                        $featureName = trim($deviceFeatureNames[1]);
+                        $keyboard = $telegramService->commandKeyboard($deviceName, $featureName);
                     }
 
                     if (empty($keyboard)) {
@@ -128,7 +127,6 @@ class TelegramController extends AbstractController implements TelegramValidated
                     return false;
                 }
             );
-
 
 
             // TODO check how to enable a fallback event when other events are not been matched

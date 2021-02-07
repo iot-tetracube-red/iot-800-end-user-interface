@@ -22,8 +22,11 @@ abstract class BackendAbstract
         $this->dictionaryService = $dictionaryService;
     }
 
-    public function sendCommand($featureName, $command, &$resultStatus = null)
-    {
-        return $this->backendClient->sendCommand($featureName, $command, $resultStatus);
-    }
+    abstract function sendCommand(
+        string $deviceName,
+        string $featureName,
+        string $commandName,
+        string $referenceId
+    ): string;
+
 }

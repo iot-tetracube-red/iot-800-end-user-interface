@@ -4,76 +4,70 @@ namespace App\Model;
 
 class FeatureCommandsModel {
 
-	/**
-	 * @var integer
-	 */
-	private $status;
+	private $deviceName;
+
+	private $featureName;
 
 	/**
-	 * @var array
+	 * @var CommandModel[]
 	 */
 	private $commands;
 
-	/**
-	 * @var string
-	 */
-	private $type;
 
 	/**
 	 * FeatureCommandsModel constructor.
 	 *
 	 * @param array $response
-	 *
-	 * @throws \Exception
 	 */
 	public function __construct( array $response ) {
-		if ( ! isset( $response['status'] ) || ! isset( $response['commands'] ) || ! isset( $response['type'] ) ) {
-			throw new \Exception( 'Model error: the backend has returned an incorrect response' );
-		}
-		$this->status   = $response['status'];
-		$this->commands = $response['commands'];
-		$this->type     = $response['type'];
+
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getStatus(): int {
-		return $this->status;
-	}
+    /**
+     * @return string
+     */
+    public function getDeviceName(): string
+    {
+        return $this->deviceName;
+    }
+
+    /**
+     * @param string $deviceName
+     */
+    public function setDeviceName(string $deviceName): void
+    {
+        $this->deviceName = $deviceName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFeatureName(): string
+    {
+        return $this->featureName;
+    }
+
+    /**
+     * @param string $featureName
+     */
+    public function setFeatureName(string $featureName): void
+    {
+        $this->featureName = $featureName;
+    }
 
 	/**
-	 * @param int $status
-	 */
-	public function setStatus( int $status ): void {
-		$this->status = $status;
-	}
-
-	/**
-	 * @return array
+	 * @return CommandModel[]
 	 */
 	public function getCommands(): array {
 		return $this->commands;
 	}
 
 	/**
-	 * @param array $commands
+	 * @param CommandModel[] $commands
 	 */
 	public function setCommands( array $commands ): void {
 		$this->commands = $commands;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getType(): string {
-		return $this->type;
-	}
 
-	/**
-	 * @param string $type
-	 */
-	public function setType( string $type ): void {
-		$this->type = $type;
-	}
 }

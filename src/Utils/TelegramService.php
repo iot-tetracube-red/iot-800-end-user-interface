@@ -3,13 +3,16 @@
 namespace App\Utils;
 
 use App\Model\FeatureCommandsModel;
+use App\Model\DeviceFeatureModel;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
 class TelegramService extends BackendAbstract
 {
 
-    public function featuresKeyboard()
+    const SOURCE = 'TELEGRAM';
+
+    public function featuresKeyboard(): ReplyKeyboardMarkup
     {
         $features = $this->backendClient->getFeatures();
         if (empty($features)) {
@@ -18,7 +21,7 @@ class TelegramService extends BackendAbstract
 
         $buttons = [];
         foreach ($features as $feature) {
-            $buttons[] = ['🔸 '.$feature['name']];
+            $buttons[] = ['🔸 '.$feature->getDeviceName().' - '.$feature->getFeatureName()];
         }
         $keyboard = new ReplyKeyboardMarkup($buttons);
         $keyboard->setOneTimeKeyboard(false);
@@ -26,32 +29,54 @@ class TelegramService extends BackendAbstract
         return $keyboard;
     }
 
-    /**
-     * @param $featureName
-     *
-     * @return FeatureCommandsModel|null
-     */
-    public function getFeature($featureName)
+    public function getFeature(string $deviceName, string $featureName): ?FeatureCommandsModel
     {
-        return $this->backendClient->getCommands($featureName);
+        return $this->backendClient->getCommands($deviceName, $featureName);
     }
 
-    public function commandKeyboard($featureName)
+    public function commandKeyboard(string $deviceName, string $featureName): InlineKeyboardMarkup
     {
-        $commands = $this->backendClient->getCommands($featureName);
+        $featureCommands = $this->backendClient->getCommands($deviceName, $featureName);
         $buttons = [];
         $tmp = [];
-        foreach ($commands->getCommands() as $command) {
+        foreach ($featureCommands->getCommands() as $command) {
             $commandLabel = $this->dictionaryService->getCommandLabel($command);
             $tmp[] =
                 [
                     'text' => $commandLabel,
-                    'callback_data' => $featureName.' - '.$command,
+                    'callback_data' => $deviceName.' - '.$featureName.' - '.$command->getName(),
                 ];
         }
         $buttons[] = $tmp;
 
         return new InlineKeyboardMarkup($buttons);
+    }
+
+    public function sendCommand(
+        string $deviceName,
+        string $featureName,
+        string $commandName,
+        string $referenceId
+    ): string
+    {
+        $status = $this->backendClient->sendCommand($deviceName, $featureName, $commandName, $referenceId, self:: SOURCE);
+        switch ($status) {
+            case 204:
+                return $this->dictionaryService->getCommandDone();
+                break;
+            case 404:
+                return $this->dictionaryService->getNotExistingDevice();
+                break;
+            case 400:
+                return $this->dictionaryService->getClientError();
+                break;
+            case 503:
+                return $this->dictionaryService->getUnavailableService();
+                break;
+            default:
+                return $this->dictionaryService->getGenericError();
+        }
+
     }
 
 }
