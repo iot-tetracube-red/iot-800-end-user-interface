@@ -3,7 +3,6 @@
 namespace App\Utils;
 
 use App\Model\FeatureCommandsModel;
-use App\Model\DeviceFeatureModel;
 use TelegramBot\Api\Types\Inline\InlineKeyboardMarkup;
 use TelegramBot\Api\Types\ReplyKeyboardMarkup;
 
@@ -38,16 +37,18 @@ class TelegramService extends BackendAbstract
     {
         $featureCommands = $this->backendClient->getCommands($deviceName, $featureName);
         $buttons = [];
-        $tmp = [];
-        foreach ($featureCommands->getCommands() as $command) {
-            $commandLabel = $this->dictionaryService->getCommandLabel($command);
-            $tmp[] =
-                [
-                    'text' => $commandLabel,
-                    'callback_data' => $deviceName.' - '.$featureName.' - '.$command->getName(),
-                ];
+        if ($featureCommands instanceof FeatureCommandsModel) {
+            $tmp = [];
+            foreach ($featureCommands->getCommands() as $command) {
+                $commandLabel = $this->dictionaryService->getCommandLabel($command);
+                $tmp[] =
+                    [
+                        'text' => $commandLabel,
+                        'callback_data' => $deviceName.' - '.$featureName.' - '.$command,
+                    ];
+            }
+            $buttons[] = $tmp;
         }
-        $buttons[] = $tmp;
 
         return new InlineKeyboardMarkup($buttons);
     }

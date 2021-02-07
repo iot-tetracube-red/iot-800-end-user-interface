@@ -102,13 +102,14 @@ class TelegramController extends AbstractController implements TelegramValidated
                 function (Update $update) use ($bot, $telegramService, $dictionaryService) {
                     $message = $update->getMessage();
                     $text = $message->getText();
-                    $textResponse = 'Problema!';
+                    $textResponse = $dictionaryService->getGenericError();
                     $keyboard = [];
 
                     $deviceFeatureNames = explode(' - ', $text);
                     if (count($deviceFeatureNames) === 2) {
                         $deviceName = trim(ltrim($deviceFeatureNames[0], '🔸'), ' ');
                         $featureName = trim($deviceFeatureNames[1]);
+                        $textResponse = $deviceName . ' - ' . $featureName;
                         $keyboard = $telegramService->commandKeyboard($deviceName, $featureName);
                     }
 

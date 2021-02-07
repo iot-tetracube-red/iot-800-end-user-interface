@@ -2,26 +2,14 @@
 
 namespace App\Model;
 
-class FeatureCommandsModel {
+class FeatureCommandsModel
+{
 
-	private $deviceName;
+    private $deviceName;
 
-	private $featureName;
+    private $featureName;
 
-	/**
-	 * @var CommandModel[]
-	 */
-	private $commands;
-
-
-	/**
-	 * FeatureCommandsModel constructor.
-	 *
-	 * @param array $response
-	 */
-	public function __construct( array $response ) {
-
-	}
+    private $commands;
 
     /**
      * @return string
@@ -55,19 +43,20 @@ class FeatureCommandsModel {
         $this->featureName = $featureName;
     }
 
-	/**
-	 * @return CommandModel[]
-	 */
-	public function getCommands(): array {
-		return $this->commands;
-	}
+    /**
+     * @return array
+     */
+    public function getCommands(): array
+    {
+        return $this->commands;
+    }
 
-	/**
-	 * @param CommandModel[] $commands
-	 */
-	public function setCommands( array $commands ): void {
-		$this->commands = $commands;
-	}
-
+    /**
+     * @param array $commands
+     */
+    public function setCommands(array $commands): void
+    {
+        $this->commands = $commands;
+    }
 
 }
